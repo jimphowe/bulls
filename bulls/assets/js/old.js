@@ -26,9 +26,34 @@ function Controls({guess, reset}) {
     // in your root component.
     const [text, setText] = useState("");
 
+    function validGuess(guess) {
+        let nums = /^[0-9]+$/;
+        let guessSet = new Set();
+        if (guess.length !== 4) {
+            return false;
+        }
+        if (!guess.match(nums)) {
+            return false;
+        }
+        for (let i = 0; i < guess.length; i++) {
+            if (guessSet.has(guess[i])) {
+                return false;
+            }
+            else {
+                guessSet.add(guess[i]);
+            }
+        }
+        return true;
+    }
+
     function keyDown(ev) {
         if (ev.key === "Enter") {
-            guess(text);
+            if (validGuess(text)) {
+                guess(text);
+            }
+            else {
+                alert("bad guess");
+            }
         }
         else if (ev.key === "Backspace") {
             setText(text.slice(0,-1));
@@ -79,34 +104,9 @@ function Bulls() {
         ch_join(setState);
     });
 
-    function validGuess(guess) {
-        let nums = /^[0-9]+$/;
-        let guessSet = new Set();
-        if (guess.length !== 4) {
-            return false;
-        }
-        if (!guess.match(nums)) {
-            return false;
-        }
-        for (let i = 0; i < guess.length; i++) {
-            if (guessSet.has(guess[i])) {
-                return false;
-            }
-            else {
-                guessSet.add(guess[i]);
-            }
-        }
-        return true;
-    }
-
     function guess(text) {
         // Inner function isn't a render function
-        if (validGuess(text)) {
-            ch_push({codeGuess: text});
-        }
-        else {
-                alert("Your guess contained duplicates or invalid characters");
-        }
+        ch_push({codeGuess: text});
     }
 
     function reset() {
@@ -230,15 +230,6 @@ function Bulls() {
                         </td>
                     </tr>
                 </table>
-                <div id="instructions">
-                    <h2>Welcome to Cows and Bulls!</h2>
-                    <p>You are trying to guess a 4 digit number, which does not contain repeated digits.
-                        After each guess, the game will tell you how many Cows and Bulls you got, with each
-                        guess sorted in a list. A Bull is a correct digit in the correct spot, and a Cow is a
-                        correct digit but in the wrong spot. The system will not allow you to make any guesses
-                        which are not 4 numerical digits or which contain repeated digits. You only get 8
-                        guesses before the game ends! Good luck!</p>
-                </div>
             </div>
         )
     }
